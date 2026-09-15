@@ -3,9 +3,10 @@ name: Build and deploy
 # Two jobs on purpose:
 #
 #   build    always runs and uploads the exported site as a downloadable
-#            artifact, so there is a deployable folder even if Pages is not
-#            set up. Download it from the run page and drop it on any static
-#            host (Netlify Drop, Cloudflare, S3, a web server).
+#            "static-site" artifact built for a ROOT-served host, so there is
+#            a deployable folder even if Pages is never set up. Download it
+#            from the run page and drop it on Netlify, Cloudflare, S3 or a
+#            plain web server.
 #
 #   publish  pushes the same output to GitHub Pages. This job fails until
 #            Pages is enabled for the repository:
@@ -47,24 +48,30 @@ jobs:
       - name: Test calculation engine
         run: npm test
 
-      - name: Build static export
-        # BASE_PATH is the repository name, because project Pages sites are
-        # served from https://<owner>.github.io/<repo>/. Drop it for a host
-        # that serves from the domain root.
+      # Two builds, because asset paths differ by where the site is mounted.
+      # Project Pages sites live at https://<owner>.github.io/<repo>/, while
+      # Netlify, Cloudflare, S3 and a plain web server serve from the root.
+      # A build made for one renders blank on the other.
+
+      - name: Build for GitHub Pages (subdirectory)
         run: BASE_PATH="/${GITHUB_REPOSITORY#*/}" npm run build
 
-      # Portable copy: download this from the run page and host it anywhere.
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+      - name: Build for a root-served host
+        run: rm -rf out && npm run build
+
+      # Portable copy: download this from the run page, unzip it, and drop the
+      # folder on any static host.
       - name: Upload downloadable site
         uses: actions/upload-artifact@v4
         with:
           name: static-site
           path: out
           if-no-files-found: error
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: out
 
   publish:
     needs: build

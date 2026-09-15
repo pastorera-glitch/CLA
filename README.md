@@ -40,9 +40,13 @@ with `Resource not accessible by integration`. Once Pages is on, re-run the work
 site lands at `https://<owner>.github.io/<repo>/` — here,
 `https://pastorera-glitch.github.io/CLA/`.
 
-Until then the `publish` job fails, but **`build` still succeeds and uploads the exported site
-as a `static-site` artifact** on the run page. Download that zip and you have a deployable
-folder without installing anything locally — see the table below.
+Until then the `publish` job fails, but **`build` still succeeds and uploads a `static-site`
+artifact** on the run page. Download that zip and you have a deployable folder without
+installing anything locally — see the table below.
+
+The workflow builds twice on purpose: once with `BASE_PATH=/<repo>` for Pages, and once
+without it for the downloadable artifact. Asset paths differ by where a site is mounted, and a
+build made for a subdirectory renders blank at a domain root.
 
 The workflow passes `BASE_PATH=/<repo>` automatically, because project Pages sites are served
 from a subdirectory.
