@@ -13,11 +13,57 @@ economics — before anyone drives to the site.
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm run build      # production build
-npm start
 npm test           # calculation-engine test suite (21 tests)
 npm run typecheck
 ```
+
+## Sharing it as a link
+
+The app is a **fully static site**. The calculation engine runs in the browser and
+evaluations persist to `localStorage`, so there is no server, no database and nothing to
+operate — `npm run build` emits a self-contained `out/` directory that any static host will
+serve.
+
+```bash
+npm run build      # writes ./out
+npm start          # preview the built site at http://localhost:3000
+```
+
+### GitHub Pages (already wired)
+
+`.github/workflows/deploy-pages.yml` typechecks, tests, builds and publishes on every push to
+`main` or the feature branch. **One-time setup:** repository *Settings → Pages → Source →
+GitHub Actions*. The site then lands at `https://<owner>.github.io/<repo>/` — for this
+repository, `https://pastorera-glitch.github.io/CLA/`.
+
+The workflow passes `BASE_PATH=/<repo>` automatically, because project Pages sites are served
+from a subdirectory.
+
+### Anywhere else
+
+| Host | How |
+| --- | --- |
+| Netlify | Drag `out/` onto the Netlify drop page, or connect the repo with build `npm run build` and publish directory `out` |
+| Cloudflare Pages | Build `npm run build`, output directory `out` |
+| Vercel | `vercel --prod` (auto-detected; no configuration needed) |
+| S3 / CloudFront | `aws s3 sync out/ s3://<bucket>/` |
+| Any web server | Copy `out/` into the document root |
+
+Serving from a subdirectory needs `BASE_PATH=/sub npm run build`. Root deployments need
+nothing. `trailingSlash` is on, so every route emits an `index.html` and no custom rewrite
+rules are required.
+
+### What to know before you circulate the link
+
+- **Every visitor gets their own private copy**, seeded with the three example properties.
+  Data lives in that person's browser via `localStorage` — nothing is sent anywhere, nothing
+  is shared between people, and clearing site data resets them to the seed.
+- **There is no authentication.** Anyone with the link sees everything, including the
+  Assumptions screen. Fine for demoing and arguing with the model; not fine for real deal
+  files. Shared, durable, access-controlled storage is the Phase 2 backend item.
+- Property URLs carry the id as a query parameter (`/property/economics/?id=…`), so a
+  colleague can deep-link a specific tab — but only for a property that exists in *their*
+  browser, which in practice means one of the three seeded examples.
 
 The app seeds itself on first run with three **fictional** example properties: a dense
 industrial candidate, a marginal fragmented retail site, and a larger campus requiring

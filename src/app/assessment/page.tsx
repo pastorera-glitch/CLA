@@ -7,6 +7,7 @@ import { Badge, Button, Callout, Card, EmptyState, ScoreBar, Table, Td, Th } fro
 import { acres, number, pct } from "@/lib/format";
 import { usePortfolio, useStore } from "@/lib/store";
 import { READINESS_CATEGORIES, READINESS_CATEGORY_LABELS } from "@/lib/types";
+import { propertyHref } from "@/lib/routes";
 
 export default function AssessmentOverviewPage() {
   const { ready } = useStore();
@@ -59,7 +60,7 @@ export default function AssessmentOverviewPage() {
             {results.map((r) => (
               <tr key={r.property.id} className="hover:bg-ink-50">
                 <Td>
-                  <Link href={`/properties/${r.property.id}/assessment`} className="font-semibold text-accent-700 hover:underline">
+                  <Link href={propertyHref(r.property.id, "assessment")} className="font-semibold text-accent-700 hover:underline">
                     {r.property.intake.name || "Untitled"}
                   </Link>
                 </Td>
@@ -113,7 +114,7 @@ export default function AssessmentOverviewPage() {
               )}
             </div>
             <div className="mt-3">
-              <Button href={`/properties/${r.property.id}/assessment`}>Open assessment</Button>
+              <Button href={propertyHref(r.property.id, "assessment")}>Open assessment</Button>
             </div>
           </Card>
         ))}

@@ -8,6 +8,7 @@
 | Language | TypeScript, `strict` | The domain is numeric and the types are the spec |
 | UI | Tailwind CSS v4 | Design tokens in one stylesheet; no component-library lock-in |
 | Persistence | `localStorage` behind a repository | MVP-appropriate; swappable without touching components |
+| Hosting | Static export (`output: "export"`) | No server to operate; the build is a folder any static host serves |
 | Tests | `node:test` via `tsx` | Engine is pure TS, so it tests without a browser |
 
 ## The hard rule: no business logic in components
@@ -99,21 +100,37 @@ a new assumption never breaks a record saved by an older build.
 /                              Portfolio dashboard
 /properties                    Filterable pipeline table
 /properties/new                Intake (draft held locally until saved)
-/properties/[id]               Underwriting summary
-/properties/[id]/intake
-/properties/[id]/assessment
-/properties/[id]/cluster
-/properties/[id]/equipment
-/properties/[id]/intervention
-/properties/[id]/residual
-/properties/[id]/value
-/properties/[id]/contract
-/properties/[id]/economics
-/properties/[id]/report        Printable 14-section evaluation
+/property?id=…                 Underwriting summary
+/property/intake?id=…
+/property/assessment?id=…
+/property/cluster?id=…
+/property/equipment?id=…
+/property/intervention?id=…
+/property/residual?id=…
+/property/value?id=…
+/property/contract?id=…
+/property/economics?id=…
+/property/report?id=…          Printable 14-section evaluation
 /assessment  /equipment  /economics  /clusters     Portfolio-level views
 /assumptions                   Admin: every constant in the engine
 /reports                       Report index
 ```
+
+The property id travels as a **query parameter rather than a path segment**. Ids are minted in
+the browser when an evaluation is created, so a dynamic path segment (`/properties/[id]`)
+could never be enumerated at build time and would block static export. `src/lib/routes.ts`
+owns the URL shape — `propertyHref(id, tab)` is the only place that knows it, so changing the
+scheme is a one-file edit.
+
+## Static export
+
+`output: "export"` with `trailingSlash: true` emits `out/` as plain HTML, CSS and JS. Every
+route prerenders (there is no server-side data), and the React tree hydrates and reads
+`localStorage` on the client. Components that read `useSearchParams` are wrapped in
+`<Suspense>` so prerendering does not bail out.
+
+`BASE_PATH` handles hosts that serve from a subdirectory (GitHub Pages project sites).
+`.github/workflows/deploy-pages.yml` typechecks, tests, builds and publishes on push.
 
 ## Extension points already in place
 

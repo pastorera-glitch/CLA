@@ -8,6 +8,7 @@ import { Button, Callout, Card, EmptyState, PlaceholderNote, ScoreBar, StatTile,
 import { money, number } from "@/lib/format";
 import { usePortfolio, useStore } from "@/lib/store";
 import { CLUSTER_CLASSIFICATION_LABELS, type ClusterClassification } from "@/lib/types";
+import { propertyHref } from "@/lib/routes";
 
 export default function ClustersPage() {
   const { ready, assumptions } = useStore();
@@ -81,7 +82,7 @@ export default function ClustersPage() {
             {results.map((r) => (
               <tr key={r.property.id} className="hover:bg-ink-50">
                 <Td>
-                  <Link href={`/properties/${r.property.id}/cluster`} className="font-semibold text-accent-700 hover:underline">
+                  <Link href={propertyHref(r.property.id, "cluster")} className="font-semibold text-accent-700 hover:underline">
                     {r.property.intake.name || "Untitled"}
                   </Link>
                   <div className="text-[11px] text-ink-400">

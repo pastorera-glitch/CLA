@@ -18,6 +18,7 @@ import {
 import { acres, dateLabel, money, number, pct } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { DECISION_STATUS_LABELS, PROPERTY_TYPE_LABELS, type DecisionStatus } from "@/lib/types";
+import { propertyHref } from "@/lib/routes";
 
 export default function PropertyOverviewPage() {
   const { assumptions } = useStore();
@@ -59,12 +60,12 @@ export default function PropertyOverviewPage() {
             </Card>
 
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-              <StatTile label="Autonomous acres" value={number(eq.autonomousAcres, 2)} sub={`of ${acres(property.assessment.geometry.totalTurfAcres)}`} href={`/properties/${property.id}/assessment`} />
-              <StatTile label="Machines" value={`${eq.liveMachines} + ${eq.spareMachines}`} sub="Live + spare" href={`/properties/${property.id}/equipment`} />
-              <StatTile label="Annual price" value={money(result.value.recommendedAnnualPrice)} sub={`${pct(result.value.savingsPct)} vs replaced spend`} href={`/properties/${property.id}/value`} />
-              <StatTile label="Contribution" value={money(e.contribution)} sub={pct(e.contributionMarginPct)} href={`/properties/${property.id}/economics`} />
-              <StatTile label="Capital required" value={money(e.upfrontOperatorCapital)} sub={e.paybackYears === null ? "No payback" : `${number(e.paybackYears, 2)} yr payback`} href={`/properties/${property.id}/economics`} />
-              <StatTile label="Human hours / yr" value={number(result.intervention.stabilized.totalHumanHours, 0)} sub={`${number(result.intervention.stabilized.siteVisitsPerYear, 1)} site visits`} href={`/properties/${property.id}/intervention`} />
+              <StatTile label="Autonomous acres" value={number(eq.autonomousAcres, 2)} sub={`of ${acres(property.assessment.geometry.totalTurfAcres)}`} href={propertyHref(property.id, "assessment")} />
+              <StatTile label="Machines" value={`${eq.liveMachines} + ${eq.spareMachines}`} sub="Live + spare" href={propertyHref(property.id, "equipment")} />
+              <StatTile label="Annual price" value={money(result.value.recommendedAnnualPrice)} sub={`${pct(result.value.savingsPct)} vs replaced spend`} href={propertyHref(property.id, "value")} />
+              <StatTile label="Contribution" value={money(e.contribution)} sub={pct(e.contributionMarginPct)} href={propertyHref(property.id, "economics")} />
+              <StatTile label="Capital required" value={money(e.upfrontOperatorCapital)} sub={e.paybackYears === null ? "No payback" : `${number(e.paybackYears, 2)} yr payback`} href={propertyHref(property.id, "economics")} />
+              <StatTile label="Human hours / yr" value={number(result.intervention.stabilized.totalHumanHours, 0)} sub={`${number(result.intervention.stabilized.siteVisitsPerYear, 1)} site visits`} href={propertyHref(property.id, "intervention")} />
             </div>
 
             <div className="grid items-start gap-4 lg:grid-cols-2">
@@ -172,10 +173,10 @@ export default function PropertyOverviewPage() {
                   </div>
                 )}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button href={`/properties/${property.id}/report`} variant="primary">
+                  <Button href={propertyHref(property.id, "report")} variant="primary">
                     Open full report
                   </Button>
-                  <Button href={`/properties/${property.id}/assessment`}>Edit assessment</Button>
+                  <Button href={propertyHref(property.id, "assessment")}>Edit assessment</Button>
                 </div>
                 <p className="mt-3 text-[11.5px] leading-snug text-ink-500">
                   Underwriting thresholds in force: target {assumptions.thresholds.targetContributionMarginPct}%,

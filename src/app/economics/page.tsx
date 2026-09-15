@@ -9,6 +9,7 @@ import { Button, Callout, Card, EmptyState, StatTile, Table, Td, Th } from "@/co
 import { portfolioRollup } from "@/lib/engine";
 import { money, moneyCompact, number, pct } from "@/lib/format";
 import { usePortfolio, useStore } from "@/lib/store";
+import { propertyHref } from "@/lib/routes";
 
 export default function PortfolioEconomicsPage() {
   const { ready, assumptions } = useStore();
@@ -108,7 +109,7 @@ export default function PortfolioEconomicsPage() {
             {results.map((r) => (
               <tr key={r.property.id} className="hover:bg-ink-50">
                 <Td>
-                  <Link href={`/properties/${r.property.id}/economics`} className="font-semibold text-accent-700 hover:underline">
+                  <Link href={propertyHref(r.property.id, "economics")} className="font-semibold text-accent-700 hover:underline">
                     {r.property.intake.name || "Untitled"}
                   </Link>
                 </Td>

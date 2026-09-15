@@ -1,10 +1,12 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import { PageHeader } from "@/components/app-shell";
 import { ClusterBadge, DecisionBadge, VerdictBadge } from "@/components/decision";
 import { PropertyNav } from "@/components/property-nav";
+import { WorkspaceLoading } from "@/components/property-page";
 import {
   Badge,
   Bullets,
@@ -28,15 +30,24 @@ import {
   TERMINATION_PROVISION_LABELS,
 } from "@/lib/types";
 import { RATING_SCALES } from "@/lib/defaults";
+import { propertyHref } from "@/lib/routes";
 
 export default function ReportPage() {
-  const params = useParams<{ id: string }>();
-  const id = params?.id ?? "";
+  // useSearchParams needs a Suspense boundary for the static export to prerender.
+  return (
+    <Suspense fallback={<WorkspaceLoading />}>
+      <ReportPageInner />
+    </Suspense>
+  );
+}
+
+function ReportPageInner() {
+  const id = useSearchParams().get("id") ?? "";
   const { ready, getProperty, assumptions } = useStore();
   const property = getProperty(id);
   const result = useUnderwriting(property);
 
-  if (!ready) return <div className="py-16 text-center text-[13px] text-ink-400">Loading…</div>;
+  if (!ready) return <WorkspaceLoading />;
   if (!property || !result) {
     return (
       <EmptyState title="Property not found">
@@ -60,7 +71,7 @@ export default function ReportPage() {
           subtitle={`${property.intake.name || "Untitled property"} — printable underwriting summary.`}
           actions={
             <>
-              <Button href={`/properties/${id}`}>Back to summary</Button>
+              <Button href={propertyHref(id)}>Back to summary</Button>
               <Button variant="primary" onClick={() => window.print()}>
                 Print / Save as PDF
               </Button>

@@ -7,6 +7,7 @@ import { DecisionBadge, VerdictBadge } from "@/components/decision";
 import { Button, Callout, Card, EmptyState, Table, Td, Th } from "@/components/ui";
 import { acres, dateLabel, money, pct } from "@/lib/format";
 import { usePortfolio, useStore } from "@/lib/store";
+import { propertyHref } from "@/lib/routes";
 
 const SECTIONS = [
   "Property overview",
@@ -77,7 +78,7 @@ export default function ReportsPage() {
             {results.map((r) => (
               <tr key={r.property.id} className="hover:bg-ink-50">
                 <Td>
-                  <Link href={`/properties/${r.property.id}/report`} className="font-semibold text-accent-700 hover:underline">
+                  <Link href={propertyHref(r.property.id, "report")} className="font-semibold text-accent-700 hover:underline">
                     {r.property.intake.name || "Untitled"}
                   </Link>
                   <div className="text-[11px] text-ink-400">
@@ -93,7 +94,7 @@ export default function ReportsPage() {
                 <Td><VerdictBadge verdict={r.economics.underwritingVerdict} /></Td>
                 <Td><DecisionBadge decision={r.recommendation.decision} overridden={r.recommendation.decisionIsOverridden} /></Td>
                 <Td align="right">
-                  <Button href={`/properties/${r.property.id}/report`}>Open</Button>
+                  <Button href={propertyHref(r.property.id, "report")}>Open</Button>
                 </Td>
               </tr>
             ))}

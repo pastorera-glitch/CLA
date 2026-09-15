@@ -9,6 +9,7 @@ import { Button, Card, EmptyState, Table, Td, Th } from "@/components/ui";
 import { money, number, pct, pctCapped } from "@/lib/format";
 import { usePortfolio, useStore } from "@/lib/store";
 import { DECISION_STATUS_LABELS, PROPERTY_TYPE_LABELS, type DecisionStatus } from "@/lib/types";
+import { propertyHref } from "@/lib/routes";
 
 type SortKey = "name" | "readiness" | "opportunity" | "margin" | "acres" | "price";
 
@@ -132,7 +133,7 @@ export default function PropertiesPage() {
               {rows.map((s) => (
                 <tr key={s.id} className="hover:bg-ink-50">
                   <Td className="min-w-[230px]">
-                    <Link href={`/properties/${s.id}`} className="font-semibold text-accent-700 hover:underline">
+                    <Link href={propertyHref(s.id)} className="font-semibold text-accent-700 hover:underline">
                       {s.name || "Untitled"}
                     </Link>
                     <div

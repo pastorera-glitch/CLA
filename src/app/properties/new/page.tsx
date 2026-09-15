@@ -9,6 +9,7 @@ import { Button, Callout, Card } from "@/components/ui";
 import { createEmptyProperty } from "@/lib/defaults";
 import { useStore } from "@/lib/store";
 import type { Property } from "@/lib/types";
+import { propertyHref } from "@/lib/routes";
 
 export default function NewEvaluationPage() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function NewEvaluationPage() {
       updatedAt: new Date().toISOString(),
     };
     replaceProperty(merged);
-    router.push(destination === "assessment" ? `/properties/${created.id}/assessment` : `/properties/${created.id}`);
+    router.push(destination === "assessment" ? propertyHref(created.id, "assessment") : propertyHref(created.id));
   };
 
   if (!ready) return <div className="py-16 text-center text-[13px] text-ink-400">Loading…</div>;

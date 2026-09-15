@@ -1,13 +1,14 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import type { ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, type ReactNode } from "react";
 
 import { PageHeader } from "@/components/app-shell";
 import { DecisionBadge } from "@/components/decision";
 import { PropertyNav } from "@/components/property-nav";
 import { Badge, Button, EmptyState } from "@/components/ui";
 import type { UnderwritingResult } from "@/lib/engine";
+import { propertyHref } from "@/lib/routes";
 import { useStore, useUnderwriting } from "@/lib/store";
 import type { Property } from "@/lib/types";
 import { PROPERTY_TYPE_LABELS } from "@/lib/types";
@@ -18,28 +19,38 @@ export interface PropertyPageRenderProps {
   update: (mutate: (draft: Property) => void) => void;
 }
 
-/**
- * Shared wrapper for every property workspace tab: resolves the route id,
- * runs the engine and hands the page a live property plus an update function.
- */
-export function PropertyWorkspace({
-  title,
-  subtitle,
-  actions,
-  children,
-}: {
+interface WorkspaceProps {
   title: string;
   subtitle?: ReactNode;
   actions?: (p: PropertyPageRenderProps) => ReactNode;
   children: (p: PropertyPageRenderProps) => ReactNode;
-}) {
-  const params = useParams<{ id: string }>();
-  const id = params?.id ?? "";
+}
+
+/**
+ * Shared wrapper for every property workspace tab: resolves the property from
+ * the `?id=` query parameter, runs the engine and hands the page a live
+ * property plus an update function.
+ */
+export function PropertyWorkspace(props: WorkspaceProps) {
+  // useSearchParams needs a Suspense boundary for the static export to prerender.
+  return (
+    <Suspense fallback={<WorkspaceLoading />}>
+      <PropertyWorkspaceInner {...props} />
+    </Suspense>
+  );
+}
+
+export function WorkspaceLoading() {
+  return <div className="py-16 text-center text-[13px] text-ink-400">Loading…</div>;
+}
+
+function PropertyWorkspaceInner({ title, subtitle, actions, children }: WorkspaceProps) {
+  const id = useSearchParams().get("id") ?? "";
   const { ready, getProperty, updateProperty } = useStore();
   const property = getProperty(id);
   const result = useUnderwriting(property);
 
-  if (!ready) return <div className="py-16 text-center text-[13px] text-ink-400">Loading…</div>;
+  if (!ready) return <WorkspaceLoading />;
   if (!property || !result) {
     return (
       <EmptyState title="Property not found">
@@ -80,7 +91,7 @@ export function PropertyWorkspace({
         actions={
           <>
             {actions?.(renderProps)}
-            <Button href={`/properties/${id}/report`}>Report</Button>
+            <Button href={propertyHref(id, "report")}>Report</Button>
           </>
         }
       />

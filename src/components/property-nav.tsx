@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const TABS = [
+import { propertyHref, type PropertyTab } from "@/lib/routes";
+
+const TABS: Array<{ slug: PropertyTab; label: string }> = [
   { slug: "", label: "Overview" },
   { slug: "intake", label: "Intake" },
   { slug: "assessment", label: "Site Assessment" },
@@ -19,16 +21,17 @@ const TABS = [
 
 export function PropertyNav({ id }: { id: string }) {
   const pathname = usePathname();
-  const base = `/properties/${id}`;
+  // Trailing slashes are enabled for static hosting, so normalize before comparing.
+  const current = pathname.replace(/\/+$/, "") || "/";
+
   return (
     <nav className="no-print mb-4 flex gap-1 overflow-x-auto border-b border-ink-200 pb-px">
       {TABS.map((t) => {
-        const href = t.slug ? `${base}/${t.slug}` : base;
-        const active = pathname === href;
+        const active = current === (t.slug ? `/property/${t.slug}` : "/property");
         return (
           <Link
             key={t.slug}
-            href={href}
+            href={propertyHref(id, t.slug)}
             className={`whitespace-nowrap rounded-t border-b-2 px-3 py-2 text-[12.5px] transition ${
               active
                 ? "border-accent-600 font-semibold text-accent-700"

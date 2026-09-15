@@ -10,6 +10,7 @@ import { portfolioRollup } from "@/lib/engine";
 import { acres, money, moneyCompact, number, pct, pctCapped } from "@/lib/format";
 import { usePortfolio, useStore } from "@/lib/store";
 import { PROPERTY_TYPE_LABELS } from "@/lib/types";
+import { propertyHref } from "@/lib/routes";
 
 export default function DashboardPage() {
   const { ready, assumptions } = useStore();
@@ -97,7 +98,7 @@ export default function DashboardPage() {
               {summaries.map((s) => (
                 <tr key={s.id} className="hover:bg-ink-50">
                   <Td className="min-w-[210px]">
-                    <Link href={`/properties/${s.id}`} className="font-semibold text-accent-700 hover:underline">
+                    <Link href={propertyHref(s.id)} className="font-semibold text-accent-700 hover:underline">
                       {s.name || "Untitled property"}
                     </Link>
                     <div className="max-w-[230px] truncate text-[11px] text-ink-400" title={s.address}>
@@ -184,7 +185,7 @@ export default function DashboardPage() {
                 <li key={i} className="flex gap-2 text-[12.5px] leading-relaxed">
                   <Badge tone="bad">Critical</Badge>
                   <span className="text-ink-700">
-                    <Link href={`/properties/${f.id}`} className="font-semibold text-accent-700 hover:underline">
+                    <Link href={propertyHref(f.id)} className="font-semibold text-accent-700 hover:underline">
                       {f.property}
                     </Link>{" "}
                     — {f.message}
