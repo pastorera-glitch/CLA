@@ -31,13 +31,18 @@ npm start          # preview the built site at http://localhost:3000
 
 ### GitHub Pages (already wired)
 
-`.github/workflows/deploy-pages.yml` typechecks, tests, builds and publishes on every push to
-`main` or the feature branch. It enables Pages on the first run, so there is normally nothing
-to configure. The site lands at `https://<owner>.github.io/<repo>/` — for this repository,
+`.github/workflows/deploy-pages.yml` typechecks, tests and builds on every push to `main` or
+the feature branch, then publishes to Pages.
+
+**One-time setup, and it has to be done by hand:** repository *Settings → Pages → Source →
+GitHub Actions*. A workflow cannot create the Pages site itself — the run token is refused
+with `Resource not accessible by integration`. Once Pages is on, re-run the workflow and the
+site lands at `https://<owner>.github.io/<repo>/` — here,
 `https://pastorera-glitch.github.io/CLA/`.
 
-If an organization policy blocks the workflow from enabling Pages, turn it on by hand once:
-repository *Settings → Pages → Source → GitHub Actions*, then re-run the workflow.
+Until then the `publish` job fails, but **`build` still succeeds and uploads the exported site
+as a `static-site` artifact** on the run page. Download that zip and you have a deployable
+folder without installing anything locally — see the table below.
 
 The workflow passes `BASE_PATH=/<repo>` automatically, because project Pages sites are served
 from a subdirectory.
@@ -46,7 +51,7 @@ from a subdirectory.
 
 | Host | How |
 | --- | --- |
-| Netlify | Drag `out/` onto the Netlify drop page, or connect the repo with build `npm run build` and publish directory `out` |
+| Netlify | Drag `out/` (or the unzipped `static-site` artifact) onto [Netlify Drop](https://app.netlify.com/drop) — instant URL, no account required to start. Or connect the repo with build `npm run build` and publish directory `out` |
 | Cloudflare Pages | Build `npm run build`, output directory `out` |
 | Vercel | `vercel --prod` (auto-detected; no configuration needed) |
 | S3 / CloudFront | `aws s3 sync out/ s3://<bucket>/` |
