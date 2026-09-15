@@ -32,9 +32,12 @@ npm start          # preview the built site at http://localhost:3000
 ### GitHub Pages (already wired)
 
 `.github/workflows/deploy-pages.yml` typechecks, tests, builds and publishes on every push to
-`main` or the feature branch. **One-time setup:** repository *Settings → Pages → Source →
-GitHub Actions*. The site then lands at `https://<owner>.github.io/<repo>/` — for this
-repository, `https://pastorera-glitch.github.io/CLA/`.
+`main` or the feature branch. It enables Pages on the first run, so there is normally nothing
+to configure. The site lands at `https://<owner>.github.io/<repo>/` — for this repository,
+`https://pastorera-glitch.github.io/CLA/`.
+
+If an organization policy blocks the workflow from enabling Pages, turn it on by hand once:
+repository *Settings → Pages → Source → GitHub Actions*, then re-run the workflow.
 
 The workflow passes `BASE_PATH=/<repo>` automatically, because project Pages sites are served
 from a subdirectory.
