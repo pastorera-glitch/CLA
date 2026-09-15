@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink-50: #f6f7f9;
+  --color-ink-100: #eceef2;
+  --color-ink-200: #d8dce4;
+  --color-ink-300: #b7bece;
+  --color-ink-400: #8b95ab;
+  --color-ink-500: #67718a;
+  --color-ink-600: #4d566d;
+  --color-ink-700: #3b4257;
+  --color-ink-800: #262b3b;
+  --color-ink-900: #171b27;
+
+  --color-accent-50: #eef4fb;
+  --color-accent-100: #d7e6f6;
+  --color-accent-200: #aecbeb;
+  --color-accent-400: #4a7fc1;
+  --color-accent-600: #1f4f88;
+  --color-accent-700: #163a66;
+  --color-accent-900: #0d2440;
+
+  --color-good-50: #eaf6ef;
+  --color-good-500: #1f7a4d;
+  --color-good-700: #145c3a;
+  --color-warn-50: #fdf4e7;
+  --color-warn-500: #a86a12;
+  --color-bad-50: #fbeceb;
+  --color-bad-500: #a3312a;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-ink-100);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Institutional data-table feel: numbers line up, headers are quiet. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.label-caps {
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-ink-500);
+}
+
+input[type="number"],
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+  font-family: inherit;
+  font-size: 13px;
+}
+
+input[type="range"] {
+  accent-color: var(--color-accent-600);
+}
+
+/* Hide spinners so numeric underwriting inputs read as figures, not steppers. */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  .print-page {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .print-break {
+    break-before: page;
+  }
+  a[href]::after {
+    content: "";
+  }
+}
